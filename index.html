@@ -1,0 +1,764 @@
+<!DOCTYPE html>
+<html lang="km">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ប្រព័ន្ធគ្រប់គ្រង និងបង្កើតឯកសារស្តង់ដាសាលាបឋមសិក្សាគំរូ - សាលាបឋមសិក្សាតាពីង</title>
+  
+  <!-- FontAwesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  
+  <!-- Main Stylesheet -->
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <!-- Top Header Banner -->
+  <header class="app-header">
+    <div class="header-container">
+      <div class="header-brand">
+        <div class="header-logo">
+          <!-- Cambodia Coat of Arms / Education Icon SVG -->
+          <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="50" cy="50" r="46" fill="#0284c7" stroke="#facc15" stroke-width="4"/>
+            <path d="M50 18L60 38H40L50 18Z" fill="#facc15"/>
+            <circle cx="50" cy="50" r="16" fill="#ffffff"/>
+            <path d="M50 38L53 45H61L55 49L57 57L50 52L43 57L45 49L39 45H47L50 38Z" fill="#e11d48"/>
+            <path d="M28 72C34 66 42 63 50 63C58 63 66 66 72 72" stroke="#facc15" stroke-width="5" stroke-linecap="round"/>
+            <path d="M22 79C31 71 40 68 50 68C60 68 69 71 78 79" stroke="#ffffff" stroke-width="3" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <div class="header-titles">
+          <h1>សាលាបឋមសិក្សាតាពីង</h1>
+          <h2>ប្រព័ន្ធគ្រប់គ្រង និងទម្រង់ឯកសារស្តង់ដាសាលាបឋមសិក្សាគំរូ</h2>
+          <p>យោងតាមគោលការណ៍ណែនាំស្តីពីការអនុវត្ត «ស្តង់ដាសាលាបឋមសិក្សាគំរូ» ក្រសួងអប់រំ យុវជន និងកីឡា (ទំព័រ១១-៣៥)</p>
+        </div>
+      </div>
+
+      <!-- Quick Statistics Badges -->
+      <div class="header-badges">
+        <div class="stat-pill">
+          <i class="fas fa-award" style="color: #fde047;"></i>
+          <span><strong>៥</strong> ស្តង់ដាគោល</span>
+        </div>
+        <div class="stat-pill">
+          <i class="fas fa-th-list" style="color: #38bdf8;"></i>
+          <span><strong>២៦</strong> សូចនាករគន្លឹះ</span>
+        </div>
+        <div class="stat-pill">
+          <i class="fas fa-file-signature" style="color: #4ade80;"></i>
+          <span><strong>៧១</strong> សូចនាកររង / ទម្រង់ឯកសារ</span>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content Wrapper -->
+  <main class="main-wrapper">
+    
+    <!-- Search and Quick Filter Controls -->
+    <div class="control-bar">
+      <div class="search-box">
+        <i class="fas fa-search search-icon"></i>
+        <input type="text" id="searchInput" placeholder="ស្វែងរកតាមលេខកូដ (ឧ. ១.១.២, ២.១.១) ឬឈ្មោះសូចនាករ ឯកសារ..." autocomplete="off">
+      </div>
+      <div class="filter-controls">
+        <button class="btn-secondary" style="background: #2563eb; color: white; border-color: #1d4ed8;" onclick="openWordFoldersModal()">
+          <i class="fas fa-folder-open"></i> ហ្វាល់ Word ទាំង ៧១ តាមស្តង់ដា
+        </button>
+        <button class="btn-secondary" onclick="exportOverviewSummary()">
+          <i class="fas fa-file-excel"></i> ទាញយកបញ្ជីសូចនាករ (CSV)
+        </button>
+        <button class="btn-secondary" style="background: #475569; color: white; border-color: #334155;" onclick="backupAllData()" title="ទាញយកទិន្នន័យដែលបានកែប្រែ និងរូបភាពភស្តុតាងទាំងអស់ទុកជាហ្វាល់បម្រុង (JSON)">
+          <i class="fas fa-file-export"></i> បម្រុងទុកទិន្នន័យ (Backup)
+        </button>
+        <button class="btn-secondary" style="background: #059669; color: white; border-color: #047857;" onclick="triggerRestoreData()" title="បញ្ចូលទិន្នន័យដែលធ្លាប់បានបម្រុងទុកពីកុំព្យូទ័រផ្សេង">
+          <i class="fas fa-file-import"></i> ដាក់ចូលទិន្នន័យ (Restore)
+        </button>
+        <input type="file" id="restoreFileInput" accept=".json" style="display: none;" onchange="handleRestoreFile(event)">
+      </div>
+    </div>
+
+    <!-- 5 Standard Buttons Navigation (User Requested: ប៊ូតុងចំនួន៥ តំណាងឱ្យស្តង់ដាទាំង៥) -->
+    <div class="standard-nav" id="standardButtonsContainer">
+      <!-- Generated dynamically by js/app.js -->
+    </div>
+
+    <!-- Dynamic Standard Content Area -->
+    <div id="mainContentArea">
+      <!-- Rendered dynamically by js/app.js -->
+    </div>
+
+  </main>
+
+  <!-- Modal for Document Form Preview, Interactive Editing & Official Print -->
+  <div class="modal-overlay" id="documentModal">
+    <div class="modal-content-box">
+      <!-- Modal Top Bar -->
+      <div class="modal-header-bar">
+        <div class="modal-header-left">
+          <i class="fas fa-file-contract" style="color: #38bdf8; font-size: 1.25rem;"></i>
+          <h3 id="modalDocTitle">ទម្រង់ឯកសារផ្លូវការ</h3>
+        </div>
+        <div class="modal-actions-right">
+          <div class="modal-actions-grid">
+            <!-- ជួរទី១ (Row 1): ៥ ប៊ូតុង -->
+            <button class="btn-modal-action btn-save-primary" id="btnSaveDocument" onclick="saveCurrentDocument()" title="រក្សាទុកទិន្នន័យដែលបានកែប្រែក្នុងប្រព័ន្ធ">
+              <i class="fas fa-save"></i> <span>រក្សាទុក</span>
+            </button>
+            <button class="btn-modal-action btn-add-sheet-top" id="btnAddDocumentSheet" onclick="addNewDocumentSheetPage()" title="បន្ថែមសន្លឹករបាយការណ៍ថ្មីមួយទំព័រទៀត (រក្សាក្បាលសំបុត្រ ក្បាលតារាង និងហត្ថលេខា)" style="background: #2563eb; color: white; border-color: #1d4ed8;">
+              <i class="fas fa-file-circle-plus"></i> <span>+ បន្ថែមសន្លឹក</span>
+            </button>
+            <button class="btn-modal-action btn-import-excel" onclick="openExcelImportModal(currentActiveDoc ? currentActiveDoc.code : null)" title="នាំចូលទិន្នន័យពី Excel ឬ Google Sheet ដើម្បីបង្កើតរបាយការណ៍ស្វ័យប្រវត្តិ" style="background: #16a34a; color: white; border-color: #15803d;">
+              <i class="fas fa-file-excel"></i> <span>នាំចូល Excel</span>
+            </button>
+            <button class="btn-modal-action btn-reset-doc" id="btnResetDocument" onclick="resetCurrentDocument()" title="កំណត់ត្រឡប់ទៅជាទម្រង់គំរូលំនាំដើមវិញ">
+              <i class="fas fa-rotate-left"></i> <span>កំណត់ឡើងវិញ</span>
+            </button>
+            <button class="btn-modal-action btn-evidence" onclick="openEvidenceModal(currentActiveDoc ? currentActiveDoc.code : null)" style="background: #0d9488; color: white; border-color: #0f766e;" title="បញ្ចូល ឬកែសម្រួលភស្តុតាង">
+              <i class="fas fa-images"></i> <span>ភស្តុតាង</span>
+            </button>
+
+            <!-- ជួរទី២ (Row 2): ៤ ប៊ូតុង -->
+            <button class="btn-modal-action btn-print-primary" onclick="printCurrentDocument()" title="បោះពុម្ពឯកសារចេញជាក្រដាស ឬរក្សាទុកជា PDF">
+              <i class="fas fa-print"></i> <span>បោះពុម្ព</span>
+            </button>
+            <button class="btn-modal-action btn-orient-landscape active-orientation" id="btnOrientLandscape" onclick="setPrintOrientation('landscape', true)" title="ជ្រើសរើសទម្រង់ក្រដាសផ្តេក (A4 Landscape) ពេលបោះពុម្ព">
+              <i class="fas fa-arrows-left-right"></i> <span>ក្រដាសផ្តេក</span>
+            </button>
+            <button class="btn-modal-action btn-orient-portrait" id="btnOrientPortrait" onclick="setPrintOrientation('portrait', true)" title="ជ្រើសរើសទម្រង់ក្រដាសបញ្ឈរ (A4 Portrait) ពេលបោះពុម្ព">
+              <i class="fas fa-arrows-up-down"></i> <span>ក្រដាសបញ្ឈរ</span>
+            </button>
+            <button class="btn-modal-action btn-export-doc" onclick="exportToWord()" title="ទាញយកជាឯកសារ Microsoft Word (.doc)" style="grid-column: span 2;">
+              <i class="fas fa-file-word"></i> <span>ទាញយក Word</span>
+            </button>
+          </div>
+
+          <button class="btn-close-modal" onclick="closeDocumentModal()" title="បិទ">
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+      </div>
+
+      <!-- Modal Body (The Official A4 Document Sheet) -->
+      <div class="modal-body-scrollable" id="documentSheetContainer">
+        <!-- Rendered dynamically by js/app.js -->
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal for Evidence Management (រូបភាព និងឯកសារភស្តុតាង) -->
+  <div class="modal-overlay" id="evidenceModal">
+    <div class="modal-content-box" style="max-width: 980px;">
+      <!-- Modal Header -->
+      <div class="modal-header-bar" style="background: linear-gradient(135deg, #0f766e 0%, #0d9488 100%);">
+        <div class="modal-header-left">
+          <i class="fas fa-images" style="color: #5eead4; font-size: 1.35rem;"></i>
+          <div>
+            <h3 id="evidenceModalTitle" style="margin: 0; font-size: 1.15rem; color: #ffffff;">បញ្ចូលភស្តុតាងបញ្ជាក់</h3>
+            <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin-top: 2px;">
+              <span id="evidenceModalSubTitle" style="font-size: 0.82rem; color: #ccfbf1;">សូចនាករ</span>
+              <span class="evidence-storage-badge" title="ប្រព័ន្ធផ្ទុកទិន្នន័យ IndexedDB ទំហំធំទូលាយ គាំទ្រឯកសារ ៥+ និង PDF ធំៗរហូតដល់ 25MB"><i class="fas fa-database"></i> ទំហំផ្ទុក៖ ធំទូលាយ (IndexedDB ៥+)</span>
+            </div>
+          </div>
+        </div>
+        <div class="modal-actions-right">
+          <button class="btn-modal-action" onclick="saveEvidenceData()" style="background: #14b8a6; color: white; border-color: #0d9488;" title="រក្សាទុកភស្តុតាងទាំងអស់">
+            <i class="fas fa-save"></i> រក្សាទុកភស្តុតាង
+          </button>
+          <button class="btn-modal-action btn-secondary" onclick="viewEvidenceInDocModal()" title="មើលទម្រង់ឯកសារពេញលេញ (ទំព័រទី២)">
+            <i class="fas fa-eye"></i> មើលក្នុងឯកសារ
+          </button>
+          <button class="btn-close-modal" onclick="closeEvidenceModal()" title="បិទ">
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+      </div>
+
+      <!-- Modal Body -->
+      <div class="modal-body-scrollable" style="background: #f8fafc; padding: 1.5rem;">
+        <!-- Evidence Instructions Banner -->
+        <div class="evidence-intro-banner">
+          <div class="intro-icon"><i class="fas fa-camera-retro"></i></div>
+          <div class="intro-text">
+            <h4>សេចក្តីណែនាំអំពីការបញ្ចូលភស្តុតាងបញ្ជាក់ (គាំទ្រយ៉ាងហោច ៥ រូបភាព ឬ ៥ PDF និង ៥ តំណលីង)៖</h4>
+            <p>
+              សូមជ្រើសរើសរូបភាពសកម្មភាព, ឯកសារស្កេន/PDF ឬបញ្ចូលតំណភ្ជាប់លីង (Google Drive, Docs, Sheets, YouTube, Facebook, Web...) ជាភស្តុតាងគាំទ្រ។ ប្រព័ន្ធបានបង្កើនទំហំផ្ទុក (IndexedDB) ឱ្យលោកគ្រូ-អ្នកគ្រូ <strong>អាចផ្ទុកឯកសារ PDF ឬរូបភាពបានយ៉ាងហោចណាស់ ៥ ឯកសារ (ទំហំរហូតដល់ 25MB ក្នុងមួយឯកសារ)</strong> និង <strong>អាចផ្ទុកតំណលីងបានចំនួន ៥</strong> យ៉ាងងាយស្រួល។
+            </p>
+            <!-- Quick Action Bar -->
+            <div class="evidence-quick-toolbar">
+              <button type="button" class="btn-quick-tool btn-primary-tool" onclick="triggerMultiUpload()" title="ចុចជ្រើសរើសរូបភាព ឬ PDF ច្រើនហ្វាល់ក្នុងពេលតែមួយ">
+                <i class="fas fa-folder-open"></i> ជ្រើសរើសឯកសារច្រើនក្នុងពេលតែមួយ (៥+ ហ្វាល់ រូបភាព/PDF)
+              </button>
+              <input type="file" id="multiEvidenceFileInput" multiple accept="image/*,.pdf" style="display: none;" onchange="onMultiEvidenceFilesChosen(event)">
+              <button type="button" class="btn-quick-tool" onclick="createFiveEvidenceSlots()" title="បង្កើតប្រអប់ចំនួន ៥ ស្វ័យប្រវត្តិដើម្បីត្រៀមបញ្ចូល">
+                <i class="fas fa-layer-group"></i> បង្កើត ៥ ប្រអប់ស្វ័យប្រវត្តិ
+              </button>
+              <button type="button" class="btn-quick-tool" onclick="addNewLinkEvidenceSlot()" title="បន្ថែមប្រអប់តំណលីងសុទ្ធ">
+                <i class="fas fa-link"></i> + បន្ថែមប្រអប់តំណលីង
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Evidence Slots Container -->
+        <div id="evidenceSlotsContainer" class="evidence-slots-container">
+          <!-- Rendered dynamically by js/app.js -->
+        </div>
+
+        <!-- Add Evidence Slot Button (+) Area -->
+        <div class="add-evidence-action-box">
+          <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+            <button type="button" class="btn-add-evidence-slot" style="flex: 2; min-width: 250px;" onclick="addNewEvidenceSlot()">
+              <i class="fas fa-plus-circle"></i> បន្ថែមប្រអប់បញ្ចូលភស្តុតាង (រូបភាព/PDF/តំណលីង) (+)
+            </button>
+            <button type="button" class="btn-add-evidence-slot btn-add-link-slot" style="flex: 1; min-width: 180px; border-color: #2563eb; color: #1d4ed8; background: #eff6ff;" onclick="addNewLinkEvidenceSlot()">
+              <i class="fas fa-link"></i> + បន្ថែមប្រអប់តំណលីង
+            </button>
+            <button type="button" class="btn-add-evidence-slot" style="flex: 1; min-width: 180px; border-color: #059669; color: #047857; background: #ecfdf5;" onclick="triggerMultiUpload()">
+              <i class="fas fa-images"></i> ជ្រើសឯកសារច្រើន (៥+)
+            </button>
+          </div>
+        </div>
+
+        <!-- Bottom Action Buttons -->
+        <div class="evidence-bottom-actions">
+          <div class="evidence-summary-counter" id="evidenceSummaryCounter" style="margin-right: auto; font-size: 0.88rem; color: #475569; font-weight: 600;">
+            <!-- Rendered by js/app.js -->
+          </div>
+          <button type="button" class="btn-save-evidence-big" onclick="saveEvidenceData()">
+            <i class="fas fa-save"></i> រក្សាទុកភស្តុតាងទាំងអស់
+          </button>
+          <button type="button" class="btn-secondary" onclick="closeEvidenceModal()">
+            បិទ
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal for Word Documents Explorer -->
+  <div class="modal-overlay" id="wordFoldersModal">
+    <div class="modal-content-box" style="max-width: 860px;">
+      <div class="modal-header-bar" style="background: #1e3a8a;">
+        <div class="modal-header-left">
+          <i class="fas fa-folder-tree" style="color: #60a5fa; font-size: 1.3rem;"></i>
+          <h3>ហ្វាល់ឯកសារ Word (.doc) ទាំង ៧១ តាមស្តង់ដាទាំង ៥</h3>
+        </div>
+        <button class="btn-close-modal" onclick="closeWordFoldersModal()" title="បិទ">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+      <div class="modal-body-scrollable" style="background: #f8fafc; padding: 1.5rem;">
+        <div style="background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 12px; padding: 1rem 1.25rem; margin-bottom: 1.5rem;">
+          <h4 style="color: #1e40af; margin-bottom: 0.35rem;"><i class="fas fa-info-circle"></i> ទីតាំងរក្សាទុកក្នុងកុំព្យូទ័ររបស់អ្នក៖</h4>
+          <code style="background: white; padding: 0.3rem 0.6rem; border-radius: 6px; border: 1px solid #cbd5e1; display: inline-block; font-size: 0.95rem; color: #0f172a;">
+            D:\សាលាបឋមសិក្សាតាពីង\ឯកសារស្តង់ដាបឋមសិក្សាគំរូ\
+          </code>
+          <p style="font-size: 0.84rem; color: #475569; margin-top: 0.5rem;">
+            រាល់ឯកសារទាំងអស់ត្រូវបានបែងចែកជា ៥ ថតតាមស្តង់ដាផ្លូវការ។ លោកអ្នកអាចចុចលើឈ្មោះឯកសារខាងក្រោមដើម្បីបើក/ទាញយក ឬបើកថតក្នុង File Explorer ដើម្បីកែសម្រួលផ្ទាល់ក្នុង Microsoft Word បានភ្លាមៗ!
+          </p>
+        </div>
+
+        <div id="wordFoldersListContainer"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal for Media Viewer (រូបភាព និងឯកសារ PDF ភស្តុតាង) -->
+  <div class="modal-overlay media-viewer-overlay" id="mediaViewerModal">
+    <div class="media-viewer-container">
+      <div class="media-viewer-header">
+        <div class="media-viewer-title-info">
+          <span class="media-type-badge" id="mediaViewerBadge"><i class="fas fa-file-pdf"></i> PDF</span>
+          <h3 id="mediaViewerTitle">ចំណងជើងភស្តុតាង</h3>
+        </div>
+        <div class="media-viewer-actions">
+          <button type="button" class="btn-viewer-tool" id="mediaViewerOpenNewTabBtn" onclick="openMediaInNewTab()" title="បើកមើលក្នុងផ្ទាំងថ្មី">
+            <i class="fas fa-external-link-alt"></i> <span class="hide-mobile">បើកផ្ទាំងថ្មី</span>
+          </button>
+          <button type="button" class="btn-viewer-tool" id="mediaViewerDownloadBtn" onclick="downloadCurrentMedia()" title="ទាញយកឯកសារ">
+            <i class="fas fa-download"></i> <span class="hide-mobile">ទាញយក</span>
+          </button>
+          <button type="button" class="btn-close-modal" onclick="closeMediaViewerModal()" title="បិទ">
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+      </div>
+      <div class="media-viewer-body" id="mediaViewerBody">
+        <!-- Rendered dynamically (Image or PDF iframe) -->
+      </div>
+      <div class="media-viewer-footer" id="mediaViewerFooter">
+        <div class="media-viewer-date" id="mediaViewerDate"></div>
+        <div class="media-viewer-desc" id="mediaViewerDesc"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal for Excel / Google Sheets Import & Auto-Report Generation -->
+  <div class="modal-overlay" id="excelImportModal">
+    <div class="modal-content-box import-modal-box">
+      <!-- Modal Header -->
+      <div class="modal-header-bar import-modal-header">
+        <div class="modal-header-left">
+          <i class="fas fa-file-excel" style="color: #4ade80; font-size: 1.5rem;"></i>
+          <div>
+            <h3 id="importModalTitle" style="margin: 0; font-size: 1.15rem; color: white;">នាំចូលទិន្នន័យពី Excel / Google Sheet</h3>
+            <p id="importModalSubtitle" style="margin: 0; font-size: 0.8rem; color: #cbd5e1; font-weight: normal;"></p>
+          </div>
+        </div>
+        <button class="btn-close-modal" onclick="closeExcelImportModal()" title="បិទ">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+
+      <!-- Modal Body -->
+      <div class="modal-body-scrollable import-modal-body">
+        
+        <!-- Tab Navigation -->
+        <div class="import-tab-nav">
+          <button type="button" class="import-tab-btn active" id="tabBtnFile" onclick="switchImportTab('file')">
+            <i class="fas fa-file-excel"></i> ផ្ទុកហ្វាល់ Excel (.xlsx, .xls, .csv)
+          </button>
+          <button type="button" class="import-tab-btn" id="tabBtnSheet" onclick="switchImportTab('sheet')">
+            <i class="fab fa-google-drive"></i> តំណភ្ជាប់ Google Sheets (URL)
+          </button>
+          <button type="button" class="import-tab-btn" id="tabBtnPaste" onclick="switchImportTab('paste')">
+            <i class="fas fa-paste"></i> ចម្លង & បិទភ្ជាប់ (Copy & Paste)
+          </button>
+        </div>
+
+        <!-- Tab 1: File Upload -->
+        <div class="import-tab-content active" id="tabContentFile">
+          <input type="file" id="excelFileInput" accept=".xlsx,.xls,.csv" style="display: none;" onchange="handleExcelFileInput(event)">
+          <div class="excel-dropzone" id="excelDropzone" onclick="document.getElementById('excelFileInput').click()">
+            <i class="fas fa-cloud-arrow-up excel-drop-icon"></i>
+            <div class="dropzone-title">ចុចទីនេះដើម្បីជ្រើសរើសហ្វាល់ Excel ឬអូសទម្លាក់ចូល</div>
+            <div class="dropzone-subtitle">គាំទ្រហ្វាល់ ៖ .xlsx, .xls, .csv (តារាងទិន្នន័យពី Microsoft Excel)</div>
+          </div>
+          <div id="excelFileInfoBar" class="excel-file-info-bar" style="display: none;">
+            <div class="file-meta-left">
+              <i class="fas fa-file-excel" style="color: #16a34a; font-size: 1.6rem;"></i>
+              <div>
+                <strong id="loadedFileName" style="color: #0f172a; font-size: 0.95rem;">filename.xlsx</strong>
+                <div id="loadedFileSize" style="font-size: 0.78rem; color: #64748b;"></div>
+              </div>
+            </div>
+            <div id="sheetSelectorWrap" style="display: flex; align-items: center; gap: 6px;">
+              <label for="excelSheetSelect" style="font-size: 0.82rem; font-weight: 600; color: #334155;">សន្លឹកការងារ៖</label>
+              <select id="excelSheetSelect" onchange="onExcelSheetSelected(this.value)" class="excel-sheet-select"></select>
+            </div>
+            <button type="button" class="btn-change-file" onclick="document.getElementById('excelFileInput').click()">
+              <i class="fas fa-sync-alt"></i> ប្តូរហ្វាល់
+            </button>
+          </div>
+        </div>
+
+        <!-- Tab 2: Google Sheets URL -->
+        <div class="import-tab-content" id="tabContentSheet" style="display: none;">
+          <div class="import-instruction-card">
+            <div style="font-weight: bold; color: #0f172a; margin-bottom: 4px;">
+              <i class="fas fa-info-circle" style="color: #0284c7;"></i> របៀបភ្ជាប់តំណលីង Google Sheet ៖
+            </div>
+            <ol style="margin: 0; padding-left: 1.25rem; font-size: 0.84rem; color: #475569; line-height: 1.5;">
+              <li>បើក Google Sheet របស់លោកគ្រូ-អ្នកគ្រូ រួចចុចប៊ូតុង <strong>Share (ចែករំលែក)</strong></li>
+              <li>ត្រង់ General access សូមជ្រើសរើស <strong>«Anyone with the link (អ្នកដែលមានតំណភ្ជាប់)»</strong> ជា Viewer</li>
+              <li>ចុច <strong>Copy link (ចម្លងតំណភ្ជាប់)</strong> រួចយកមកបិទភ្ជាប់ (Paste) ក្នុងប្រអប់ខាងក្រោម</li>
+            </ol>
+          </div>
+          <div class="sheet-url-input-group">
+            <div class="input-with-icon">
+              <i class="fab fa-google-drive" style="color: #16a34a; font-size: 1.2rem;"></i>
+              <input type="url" id="googleSheetUrlInput" placeholder="https://docs.google.com/spreadsheets/d/.../edit#gid=..." class="sheet-url-input">
+            </div>
+            <button type="button" class="btn-fetch-sheet" onclick="fetchGoogleSheetData()">
+              <i class="fas fa-cloud-arrow-down"></i> ទាញយកទិន្នន័យ
+            </button>
+          </div>
+          <div style="margin-top: 10px; display: flex; align-items: center; gap: 8px; background: white; padding: 6px 12px; border-radius: 8px; border: 1px solid #cbd5e1;">
+            <label for="googleSheetNameInput" style="font-size: 0.82rem; font-weight: 600; color: #334155; white-space: nowrap;">
+              <i class="fas fa-layer-group" style="color: #0284c7;"></i> ឈ្មោះសន្លឹកការងារ ឬ GID (ជាជម្រើស) ៖
+            </label>
+            <input type="text" id="googleSheetNameInput" placeholder="ឧ. Sheet2 ឬ ឈ្មោះ Sheet ជាក់លាក់ ឬលេខ GID (បើក្នុង URL មាន #gid=... រួចហើយ មិនបាច់វាយក៏បាន)" style="flex: 1; padding: 0.4rem 0.65rem; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 0.84rem; outline: none;">
+          </div>
+          <div style="font-size: 0.78rem; color: #475569; margin-top: 8px; background: #f8fafc; padding: 6px 10px; border-radius: 6px; border-left: 3px solid #16a34a;">
+            <i class="fas fa-lightbulb" style="color: #eab308;"></i> <strong>គន្លឹះជ្រើសរើស Sheet ជាក់លាក់ ៖</strong> 
+            ក្នុង Google Sheets នៅពេលលោកគ្រូ-អ្នកគ្រូចុចលើ Tab សន្លឹកការងារណាមួយនៅខាងក្រោម (ឧ. Sheet2) តំណលីងក្នុង Browser នឹងមានភ្ជាប់កូដ <code>#gid=...</code> នៃ Sheet នោះដោយស្វ័យប្រវត្តិ។ គ្រាន់តែ Copy តំណលីងនោះមកបិទភ្ជាប់ ប្រព័ន្ធនឹងទាញយកចំ Sheet នោះភ្លាមតែម្តង!
+          </div>
+        </div>
+
+        <!-- Tab 3: Copy & Paste Directly -->
+        <div class="import-tab-content" id="tabContentPaste" style="display: none;">
+          <div class="import-instruction-card" style="margin-bottom: 0.75rem;">
+            <i class="fas fa-lightbulb" style="color: #eab308;"></i> <strong>ងាយស្រួល និងរហ័ស (ដំណើរការទាំងពេលគ្មានអ៊ីនធឺណិត) ៖</strong> 
+            បើកហ្វាល់ Excel ឬ Google Sheet របស់លោកគ្រូ-អ្នកគ្រូ រួច Select <strong>តារាងទាំងមូល</strong> ឬ <strong>តែមួយជួរឈរ (Column)</strong> ឬ <strong>មួយជួរដេក (Row)</strong> ចុច <strong>Ctrl + C (ចម្លង)</strong> ហើយមកចុច <strong>Ctrl + V (បិទភ្ជាប់)</strong> ក្នុងប្រអប់ខាងក្រោមនេះ។
+          </div>
+          <div class="quick-paste-bar">
+            <span style="font-size: 0.8rem; font-weight: 700; color: #475569;">ប្រភេទនៃការបិទភ្ជាប់ ៖</span>
+            <button type="button" class="quick-paste-btn" onclick="setPasteModePlaceholder('full')">
+              <i class="fas fa-table-cells" style="color: #16a34a;"></i> តារាងទាំងមូល
+            </button>
+            <button type="button" class="quick-paste-btn" onclick="setPasteModePlaceholder('column')">
+              <i class="fas fa-columns" style="color: #0284c7;"></i> មួយជួរឈរ (Column)
+            </button>
+            <button type="button" class="quick-paste-btn" onclick="setPasteModePlaceholder('row')">
+              <i class="fas fa-grip-lines" style="color: #d97706;"></i> មួយជួរដេក (Row)
+            </button>
+          </div>
+          <textarea id="pastedDataTable" class="paste-textarea" rows="6" placeholder="បិទភ្ជាប់ទិន្នន័យដែលបាន Copy ពី Excel ឬ Google Sheet នៅទីនេះ (តារាងទាំងមូល ឬតែមួយជួរឈរ ឬមួយជួរដេក)..." oninput="onPastedDataChanged(this.value)"></textarea>
+          <div style="display: flex; justify-content: flex-end; gap: 8px; margin-top: 6px;">
+            <button type="button" class="btn-parse-paste" onclick="pasteFromClipboardToTextarea()" style="background: #0284c7;">
+              <i class="fas fa-paste"></i> បិទភ្ជាប់ពី Clipboard
+            </button>
+            <button type="button" class="btn-parse-paste" onclick="processPastedData()">
+              <i class="fas fa-check"></i> ដំណើរការទិន្នន័យដែលបានបិទភ្ជាប់
+            </button>
+          </div>
+        </div>
+
+        <!-- Live Preview Area -->
+        <div id="importPreviewArea" class="import-preview-area" style="display: none;">
+          <div class="preview-header-bar">
+            <div class="preview-title">
+              <i class="fas fa-table" style="color: #16a34a;"></i> 
+              <span style="font-weight: 700; color: #0f172a;">ការពិនិត្យមើលទិន្នន័យជាមុន (Live Preview)</span>
+              <span class="preview-badge" id="previewRowCountBadge">០ ជួរដេក</span>
+            </div>
+          </div>
+
+          <!-- Import Scope Mode Selector (តារាងទាំងមូល / ម្តងមួយជួរឈរ / ម្តងមួយជួរដេក) -->
+          <div class="import-mode-card">
+            <div class="import-mode-title">
+              <i class="fas fa-sliders-h" style="color: #0284c7;"></i>
+              <strong>ជ្រើសរើសទម្រង់នៃការនាំចូលទិន្នន័យ ៖</strong>
+            </div>
+
+            <div class="import-mode-options-grid">
+              <label class="import-mode-option active" id="lblModeFullTable">
+                <input type="radio" name="importScopeMode" id="modeFullTable" value="full" checked onchange="onImportScopeModeChanged('full')">
+                <div class="mode-opt-content">
+                  <div class="mode-opt-header">
+                    <i class="fas fa-table-cells" style="color: #16a34a;"></i> <strong>តារាងទាំងមូល</strong>
+                  </div>
+                  <span class="mode-opt-desc">នាំចូលគ្រប់ជួរឈរ និងគ្រប់ជួរដេកពី Excel/Sheet</span>
+                </div>
+              </label>
+
+              <label class="import-mode-option" id="lblModeColumn">
+                <input type="radio" name="importScopeMode" id="modeColumn" value="column" onchange="onImportScopeModeChanged('column')">
+                <div class="mode-opt-content">
+                  <div class="mode-opt-header">
+                    <i class="fas fa-columns" style="color: #0284c7;"></i> <strong>ម្តងមួយជួរឈរ</strong>
+                  </div>
+                  <span class="mode-opt-desc">ចម្លងទិន្នន័យចូលក្នុងជួរឈរណាមួយ ឬបង្កើតថ្មី</span>
+                </div>
+              </label>
+
+              <label class="import-mode-option" id="lblModeRow">
+                <input type="radio" name="importScopeMode" id="modeRow" value="row" onchange="onImportScopeModeChanged('row')">
+                <div class="mode-opt-content">
+                  <div class="mode-opt-header">
+                    <i class="fas fa-grip-lines" style="color: #d97706;"></i> <strong>ម្តងមួយជួរដេក</strong>
+                  </div>
+                  <span class="mode-opt-desc">ចម្លងទិន្នន័យបញ្ចូលជាជួរដេកថ្មី ឬជំនួសជួរដេក</span>
+                </div>
+              </label>
+            </div>
+
+            <!-- Mode Specific Configuration Panel -->
+            <!-- 1. Full Table Config -->
+            <div id="configFullTable" class="mode-config-panel">
+              <label class="preview-checkbox-label" style="color: #0f172a; font-weight: 600;">
+                <input type="checkbox" id="chkReplaceTableCompletely" checked onchange="onReplaceTableCompletelyToggled()"> 
+                <i class="fas fa-sync-alt" style="color: #0284c7;"></i> ផ្លាស់ប្តូរតារាងទិន្នន័យទាំងស្រុងតាម Excel/Sheet (ទាំងក្បាលជួរឈរ និងជួរដេកទាំងអស់)
+              </label>
+              <div style="margin-top: 6px; display: flex; flex-direction: column; gap: 6px;">
+                <label class="preview-checkbox-label" style="font-size: 0.84rem; color: #475569;">
+                  <input type="checkbox" id="chkReplaceExisting" checked> ជំនួសទិន្នន័យតារាងចាស់ (បើដោះធីក គឺបន្ថែមជួរដេកបន្តពីក្រោម)
+                </label>
+                <label class="preview-checkbox-label" style="font-size: 0.84rem; color: #64748b;">
+                  <input type="checkbox" id="chkKeepOriginalHeaders" onchange="onKeepOriginalHeadersToggled()"> 
+                  <i class="fas fa-shield-alt" style="color: #64748b;"></i> រក្សាក្បាលតារាងគំរូដើមទុកនៅដដែល (ជំនួសតែទិន្នន័យក្នុងជួរដេក)
+                </label>
+              </div>
+            </div>
+
+            <!-- 2. Single Column Config -->
+            <div id="configColumn" class="mode-config-panel" style="display: none;">
+              <div class="col-mapping-grid">
+                <div class="mapping-field">
+                  <label for="selectSourceColumn"><i class="fas fa-file-excel" style="color: #16a34a;"></i> ជួរឈរប្រភពពី Excel/Sheet ៖</label>
+                  <select id="selectSourceColumn" class="custom-select" onchange="onSourceColumnChanged()"></select>
+                </div>
+                <div class="mapping-arrow">
+                  <i class="fas fa-arrow-right"></i>
+                </div>
+                <div class="mapping-field">
+                  <label for="selectTargetColumn"><i class="fas fa-table" style="color: #0284c7;"></i> ទីតាំងដាក់ក្នុងតារាងរបាយការណ៍ ៖</label>
+                  <select id="selectTargetColumn" class="custom-select" onchange="onTargetColumnChanged()"></select>
+                </div>
+              </div>
+              <div class="mapping-hint">
+                <i class="fas fa-info-circle"></i> លោកគ្រូ-អ្នកគ្រូ អាចជ្រើសរើស <strong>«ជំនួសចូលក្នុងជួរឈរណាមួយ»</strong> (ឧ. ជួរឈរឈ្មោះ, ពិន្ទុ...) ឬ <strong>«➕ បង្កើតជាជួរឈរថ្មី»</strong>។ ប្រសិនបើចំនួនទិន្នន័យមានច្រើនជាងជួរដេកបច្ចុប្បន្ន ប្រព័ន្ធនឹងបន្ថែមជួរដេកថ្មីដោយស្វ័យប្រវត្តិ។
+              </div>
+              <div style="margin-top: 8px; display: flex; flex-direction: column; gap: 6px;">
+                <label class="preview-checkbox-label" style="font-size: 0.82rem; margin: 0; color: #0f172a; font-weight: 600;">
+                  <input type="checkbox" id="chkKeepTargetColHeader" checked> 
+                  <i class="fas fa-shield-alt" style="color: #16a34a;"></i> រក្សាចំណងជើងជួរឈរផ្លូវការទុកនៅដដែល (ឧ. «ឈ្មោះសិស្ស» មិនឱ្យត្រូវបាត់បង់)
+                </label>
+                <label class="preview-checkbox-label" style="font-size: 0.82rem; margin: 0;">
+                  <input type="checkbox" id="chkColFirstRowIsHeader" checked onchange="onColFirstRowHeaderToggled()"> 
+                  <span>ជួរដេកទី១ នៃប្រភពជាចំណងជើងជួរឈរ (បើដោះធីក គឺយកជួរដេកទី១ ជាទិន្នន័យជួរទី១)</span>
+                </label>
+              </div>
+            </div>
+
+            <!-- 3. Single Row Config -->
+            <div id="configRow" class="mode-config-panel" style="display: none;">
+              <div class="row-mapping-grid">
+                <div class="mapping-field">
+                  <label for="selectSourceRow"><i class="fas fa-file-excel" style="color: #16a34a;"></i> ជួរដេកប្រភពពី Excel/Sheet ៖</label>
+                  <select id="selectSourceRow" class="custom-select" onchange="onSourceRowChanged()"></select>
+                </div>
+                <div class="mapping-arrow">
+                  <i class="fas fa-arrow-right"></i>
+                </div>
+                <div class="mapping-field">
+                  <label for="selectTargetRowAction"><i class="fas fa-table" style="color: #0284c7;"></i> សកម្មភាពបញ្ចូល ៖</label>
+                  <select id="selectTargetRowAction" class="custom-select" onchange="onTargetRowActionChanged()">
+                    <option value="append">➕ បន្ថែមជាជួរដេកថ្មីនៅខាងក្រោមបង្អស់</option>
+                    <option value="replace_specific">🔄 ជំនួសជួរដេកណាមួយដែលមានស្រាប់...</option>
+                  </select>
+                </div>
+                <div class="mapping-field" id="wrapTargetRowIndex" style="display: none;">
+                  <label for="selectTargetRowIndex"><i class="fas fa-pen-to-square" style="color: #d97706;"></i> ជួរដេកដែលត្រូវជំនួស ៖</label>
+                  <select id="selectTargetRowIndex" class="custom-select"></select>
+                </div>
+              </div>
+              <div style="margin-top: 8px; display: flex; align-items: center; gap: 8px;">
+                <label class="preview-checkbox-label" style="font-size: 0.82rem; margin: 0;">
+                  <input type="checkbox" id="chkRowFirstRowIsHeader" checked onchange="onRowFirstRowHeaderToggled()"> 
+                  <span>រំលងជួរដេកទី១ (ជាក្បាលតារាង មិនបាច់បញ្ចូល)</span>
+                </label>
+              </div>
+            </div>
+
+            <div style="padding-top: 0.5rem; border-top: 1px dashed #e2e8f0;">
+              <label class="preview-checkbox-label">
+                <input type="checkbox" id="chkAttachAsEvidence" checked> រក្សាទុកប្រភពជាភស្តុតាងបញ្ជាក់ (Annex) ដោយស្វ័យប្រវត្តិ
+              </label>
+            </div>
+          </div>
+
+          <div class="preview-table-container">
+            <table class="preview-table" id="importPreviewTable">
+              <thead id="previewTableHead"></thead>
+              <tbody id="previewTableBody"></tbody>
+            </table>
+          </div>
+
+          <div class="preview-help-text">
+            <i class="fas fa-info-circle"></i> បន្ទាប់ពីចុចចម្លង/នាំចូលទិន្នន័យ លោកគ្រូ-អ្នកគ្រូ <strong>នៅតែអាចចុចកែសម្រួល ឬបំពេញបន្ថែមផ្ទាល់លើគ្រប់ក្រឡានៃតារាងបានដូចដើមដដែល</strong>។
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Modal Footer Action -->
+      <div class="modal-footer-bar import-modal-footer">
+        <div id="importStatusMsg" class="import-status-msg"></div>
+        <div style="display: flex; gap: 8px;">
+          <button type="button" class="btn-modal-cancel" onclick="closeExcelImportModal()">
+            បោះបង់
+          </button>
+          <button type="button" class="btn-modal-generate" id="btnApplyImport" onclick="applyImportedDataToDocument()" disabled>
+            <i class="fas fa-bolt"></i> ⚡ ទាញទិន្នន័យបង្កើតជារបាយការណ៍ស្វ័យប្រវត្តិ
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal for Deleting Table Column (លុបជួរឈរក្នុងតារាង) -->
+  <div class="modal-overlay" id="deleteColumnModal">
+    <div class="modal-content-box" style="max-width: 520px; border-radius: 12px; overflow: hidden; box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.3);">
+      <!-- Modal Header -->
+      <div class="modal-header-bar" style="background: linear-gradient(135deg, #be123c 0%, #9f1239 100%); padding: 1rem 1.25rem;">
+        <div class="modal-header-left" style="display: flex; align-items: center; gap: 10px;">
+          <i class="fas fa-trash-alt" style="color: #fecdd3; font-size: 1.35rem;"></i>
+          <div>
+            <h3 style="margin: 0; font-size: 1.1rem; color: white;">លុបជួរឈរក្នុងតារាងរបាយការណ៍</h3>
+            <p style="margin: 0; font-size: 0.8rem; color: #fbcfe8; font-weight: normal;">ជ្រើសរើសជួរឈរដែលលោកអ្នកចង់ដកចេញ</p>
+          </div>
+        </div>
+        <button class="btn-close-modal" onclick="closeDeleteColumnModal()" title="បិទ">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+
+      <!-- Modal Body -->
+      <div class="modal-body-scrollable" style="padding: 1.25rem; max-height: 420px; overflow-y: auto;">
+        <div style="font-size: 0.88rem; color: #475569; margin-bottom: 1rem; line-height: 1.5;">
+          <i class="fas fa-info-circle" style="color: #e11d48;"></i> លោកអ្នកអាចចុច <strong>«លុបកូឡោននេះ»</strong> លើជួរឈរណាមួយខាងក្រោម ឬចុចប៊ូតុងលុបជួរឈរចុងក្រោយបង្អស់ភ្លាមៗ៖
+        </div>
+
+        <div id="deleteColumnListContainer" class="col-delete-list">
+          <!-- Dynamic column items injected by JS -->
+        </div>
+      </div>
+
+      <!-- Modal Footer -->
+      <div class="modal-footer-bar" style="padding: 0.85rem 1.25rem; background: #f8fafc; border-top: 1px solid #e2e8f0; display: flex; justify-content: space-between; align-items: center;">
+        <button type="button" class="btn-table-action" onclick="deleteLastTableColumn()" style="background: #e11d48; color: white; border: 1px solid #be123c; padding: 0.45rem 0.9rem; border-radius: 6px; font-family: 'Kantumruy Pro'; font-size: 0.84rem; cursor: pointer;">
+          <i class="fas fa-arrow-left"></i> លុបជួរឈរចុងក្រោយបង្អស់
+        </button>
+        <button type="button" class="btn-modal-cancel" onclick="closeDeleteColumnModal()" style="padding: 0.45rem 1rem; border-radius: 6px; border: 1px solid #cbd5e1; background: white; font-family: 'Kantumruy Pro'; font-size: 0.84rem; cursor: pointer;">
+          បិទ
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Message Element -->
+  <div id="appToast" class="toast-msg"></div>
+
+  <!-- Right-Click Context Menu for Report Table -->
+  <div id="tableContextMenu" class="table-context-menu" style="display: none;">
+    <div class="context-menu-item" onclick="handleContextMenuAction('merge')">
+      <i class="fas fa-object-group" style="color: #0d9488;"></i>
+      <span>បញ្ចូលក្រឡា (Merge)</span>
+      <kbd>Alt+M</kbd>
+    </div>
+    <div class="context-menu-item" onclick="handleContextMenuAction('merge-right')">
+      <i class="fas fa-arrow-right" style="color: #0284c7;"></i>
+      <span>បញ្ចូលជាមួយក្រឡាខាងស្តាំ</span>
+    </div>
+    <div class="context-menu-item" onclick="handleContextMenuAction('merge-down')">
+      <i class="fas fa-arrow-down" style="color: #2563eb;"></i>
+      <span>បញ្ចូលជាមួយក្រឡាខាងក្រោម</span>
+    </div>
+    <div class="context-menu-item" onclick="handleContextMenuAction('unmerge')">
+      <i class="fas fa-object-ungroup" style="color: #d97706;"></i>
+      <span>បំបែកក្រឡា (Unmerge)</span>
+      <kbd>Alt+Shift+M</kbd>
+    </div>
+    <div class="context-menu-divider"></div>
+    <div class="context-menu-item" onclick="handleContextMenuAction('insert-row')">
+      <i class="fas fa-plus" style="color: #16a34a;"></i>
+      <span>បន្ថែមជួរដេកបន្ទាប់ពីនេះ</span>
+    </div>
+    <div class="context-menu-item" onclick="handleContextMenuAction('delete-row')">
+      <i class="fas fa-trash-alt" style="color: #e11d48;"></i>
+      <span>លុបជួរដេកនេះ</span>
+    </div>
+    <div class="context-menu-item" onclick="handleContextMenuAction('insert-col')">
+      <i class="fas fa-columns" style="color: #0284c7;"></i>
+      <span>បន្ថែមជួរឈរខាងស្តាំ</span>
+    </div>
+    <div class="context-menu-item" onclick="handleContextMenuAction('delete-col')">
+      <i class="fas fa-times" style="color: #be123c;"></i>
+      <span>លុបជួរឈរនេះ</span>
+    </div>
+    <div class="context-menu-divider"></div>
+    <div class="context-menu-item" onclick="handleContextMenuAction('paste')">
+      <i class="fas fa-paste" style="color: #475569;"></i>
+      <span>បិទភ្ជាប់ទិន្នន័យ (Paste)</span>
+      <kbd>Ctrl+V</kbd>
+    </div>
+  </div>
+
+  <!-- JavaScript Modules -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+  <script src="js/data.js"></script>
+  <script src="js/app.js"></script>
+
+  <!-- Inline Helper Scripts for Extra Utilities -->
+  <script>
+    function openWordFoldersModal() {
+      const modal = document.getElementById('wordFoldersModal');
+      const listContainer = document.getElementById('wordFoldersListContainer');
+      if (!modal || !listContainer) return;
+
+      let html = '';
+      STANDARDS_DATA.forEach(std => {
+        let docsCount = 0;
+        std.keyIndicators.forEach(k => docsCount += k.subIndicators.length);
+
+        html += `
+          <div style="background: white; border: 1px solid #e2e8f0; border-radius: 14px; margin-bottom: 1.25rem; overflow: hidden; box-shadow: 0 2px 4px rgba(0,0,0,0.04);">
+            <div style="background: ${std.color}; color: white; padding: 0.85rem 1.25rem; display: flex; align-items: center; justify-content: space-between;">
+              <div style="font-weight: 700; font-size: 1rem;">
+                <i class="fas fa-folder" style="margin-right: 0.5rem;"></i>
+                ${std.title}
+              </div>
+              <span style="background: rgba(255,255,255,0.25); padding: 0.2rem 0.65rem; border-radius: 9999px; font-size: 0.82rem; font-weight: 600;">
+                ${khmerNumber(docsCount)} ឯកសារ Word
+              </span>
+            </div>
+            <div style="padding: 1rem; display: grid; grid-template-columns: 1fr; gap: 0.5rem;">
+        `;
+
+        std.keyIndicators.forEach(k => {
+          k.subIndicators.forEach(sub => {
+            const fileName = `ឯកសារ_${sub.code}_${sub.templateTitle}.doc`;
+            const filePath = `${std.title}/${fileName}`;
+            html += `
+              <div style="display: flex; align-items: center; justify-content: space-between; padding: 0.5rem 0.75rem; background: #f8fafc; border: 1px solid #f1f5f9; border-radius: 8px;">
+                <div style="display: flex; align-items: center; gap: 0.6rem; overflow: hidden;">
+                  <span style="background: #0f172a; color: #fde047; font-weight: bold; font-size: 0.75rem; padding: 0.15rem 0.45rem; border-radius: 4px; white-space: nowrap;">${sub.code}</span>
+                  <span style="font-size: 0.88rem; font-weight: 600; color: #1e293b; text-overflow: ellipsis; white-space: nowrap; overflow: hidden;">${sub.templateTitle}</span>
+                </div>
+                <a href="${encodeURI(filePath)}" download="${fileName}" style="background: #2563eb; color: white; text-decoration: none; padding: 0.35rem 0.75rem; border-radius: 6px; font-size: 0.78rem; font-weight: 600; display: inline-flex; align-items: center; gap: 0.35rem; white-space: nowrap;">
+                  <i class="fas fa-download"></i> បើក/ទាញយក
+                </a>
+              </div>
+            `;
+          });
+        });
+
+        html += `
+            </div>
+          </div>
+        `;
+      });
+
+      listContainer.innerHTML = html;
+      modal.classList.add('active');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeWordFoldersModal() {
+      const modal = document.getElementById('wordFoldersModal');
+      if (modal) modal.classList.remove('active');
+      document.body.style.overflow = '';
+    }
+
+    // Close wordFoldersModal on ESC or background click
+    document.getElementById('wordFoldersModal').addEventListener('click', (e) => {
+      if (e.target.id === 'wordFoldersModal') closeWordFoldersModal();
+    });
+
+    function exportOverviewSummary() {
+      const all = getAllSubIndicators();
+      let csvContent = "data:text/csv;charset=utf-8,\uFEFF";
+      csvContent += "លេខសម្គាល់,ស្តង់ដា,សូចនាករគន្លឹះ,សូចនាកររង,ឯកសារតម្រូវក្នុងកូឡោនទី២\n";
+      
+      all.forEach(item => {
+        const cleanDocs = (item.col2Docs || '').replace(/"/g, '""');
+        const cleanName = (item.name || '').replace(/"/g, '""');
+        csvContent += `"${item.code}","${item.standardTitle}","${item.keyIndicatorTitle}","${cleanName}","${cleanDocs}"\n`;
+      });
+      
+      const encodedUri = encodeURI(csvContent);
+      const link = document.createElement("a");
+      link.setAttribute("href", encodedUri);
+      link.setAttribute("download", "បញ្ជីសូចនាករនិងឯកសារស្តង់ដាសាលាបឋមសិក្សាគំរូ_៧១សូចនាករ.csv");
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      showToast("បានទាញយកបញ្ជីសូចនាករទាំង ៧១ ជាឯកសារ CSV/Excel រួចរាល់!");
+    }
+  </script>
+
+</body>
+</html>
